@@ -147,7 +147,6 @@ teslooping = async () => {
     }
 }
 
-
 function createtable() {
     // db.createCollection("counters")
     MongoClient.connect(url, (err, client) => {
@@ -184,7 +183,35 @@ function insertable() {
     });
 }
 
+function tesdate() {
+    var d = new Date();
+    return d
+}
+
+function tesaxios() {
+    axios.get("https://store.steampowered.com/api/appdetails?appids=275060")
+        .then((res) => {
+            if (res === undefined) {
+                console.log('no response');
+            }
+            else {
+                console.log(res.data);
+            }
+        })
+}
 
 
-insertable()
+convert = async (req, res) => {
+    let response = await axios.get("http://localhost:2000/data/all")
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        let dbo = db.db("tomato").collection("game")
+        dbo.insertMany(response.data, function (err, res) {
+            if (err) throw err;
+            console.log("Number of documents inserted: " + res.insertedCount);
+            db.close();
+        });
+    });
+}
 
+convert()
